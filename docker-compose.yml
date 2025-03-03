@@ -5,6 +5,3 @@ services:
     restart: unless-stopped
     volumes:
       - ./vol:/data/
-
-volumes:
-  counter_data:
