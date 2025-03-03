@@ -38,11 +38,11 @@ async def on_message(message):
 
     async with lock:
         if message.author.id in MONITORED_USERS:
-            counter += 1
+            counter += len(message.content.split(' '))
         else:
             if counter > previous_counter:
                 users = ''.join(map(lambda x: f" <@{x}>", MONITORED_USERS))
-                await message.channel.send(f"{users} yapping streak is now {counter} messages")
+                await message.channel.send(f"{users} yapping streak is now {counter} words")
                 with open(COUNTER_FILE, "w") as f:
                     f.write(str(counter))
                 previous_counter = counter
