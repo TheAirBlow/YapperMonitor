@@ -13,10 +13,7 @@ counter = 0
 previous_counter = 0
 if os.path.exists(COUNTER_FILE):
     with open(COUNTER_FILE, "r") as f:
-        try:
-            previous_counter = int(f.read().strip())
-        except:
-            pass
+        previous_counter = int(f.read().strip())
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -24,14 +21,6 @@ intents.message_content = True
 bot = discord.Client(intents=intents)
 logger = logging.getLogger('discord')
 lock = asyncio.Lock()
-
-def save_counter(value):
-    global previous_counter
-
-    with open(COUNTER_FILE, "w") as f:
-        f.write(str(value))
-
-    previous_counter = value
 
 @bot.event
 async def on_ready():
@@ -54,7 +43,11 @@ async def on_message(message):
             if counter > previous_counter:
                 users = ''.join(map(lambda x: f" <@{x}>", MONITORED_USERS))
                 await message.channel.send(f"{users} yapping streak is now {counter} messages")
-            save_counter(counter)
+
+            with open(COUNTER_FILE, "w") as f:
+                f.write(str(counter))
+
+            previous_counter = counter
             counter = 0
 
 bot.run(TOKEN)
