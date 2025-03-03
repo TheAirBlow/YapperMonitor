@@ -4,7 +4,7 @@ import os
 import asyncio
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+GUILD_ID = int(os.getenv("GUILD_ID"))
 MONITORED_USERS = set(map(int, os.getenv("MONITORED_USERS", "").split(",")))
 
 COUNTER_FILE = "/data/counter.txt"
@@ -40,7 +40,7 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if message.channel.id != CHANNEL_ID:
+    if message.guild.id != GUILD_ID:
         return
 
     async with lock:
