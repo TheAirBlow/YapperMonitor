@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import logging
 import os
 
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -9,28 +10,32 @@ MONITORED_USERS = set(map(int, os.getenv("MONITORED_USERS", "").split(",")))
 COUNTER_FILE = "/data/counter.txt"
 
 counter = 0
+previous_counter = 0
 if os.path.exists(COUNTER_FILE):
     with open(COUNTER_FILE, "r") as f:
         try:
-            counter = int(f.read().strip())
+            previous_counter = int(f.read().strip())
         except:
             pass
 
 intents = discord.Intents.default()
-intents.messages = True
-intents.guilds = True
 intents.message_content = True
 
 bot = discord.Client(intents=intents)
+logger = logging.getLogger('discord')
 lock = asyncio.Lock()
 
 def save_counter(value):
+    global previous_counter
+
     with open(COUNTER_FILE, "w") as f:
         f.write(str(value))
 
+    previous_counter = value
+
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user}")
+    logger.info(f"Logged in as {bot.user}")
 
 @bot.event
 async def on_message(message):
@@ -43,12 +48,8 @@ async def on_message(message):
         return
 
     async with lock:
-        previous_counter = counter
-
         if message.author.id in MONITORED_USERS:
             counter += 1
-            save_counter(counter)
-
         else:
             if counter > previous_counter:
                 await message.channel.send(f"{map(lambda x: f" <@{x}>", MONITORED_USERS)} yapping streak is now {counter} messages")
