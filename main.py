@@ -43,11 +43,9 @@ async def on_message(message):
             if counter > previous_counter:
                 users = ''.join(map(lambda x: f" <@{x}>", MONITORED_USERS))
                 await message.channel.send(f"{users} yapping streak is now {counter} messages")
-
-            with open(COUNTER_FILE, "w") as f:
-                f.write(str(counter))
-
-            previous_counter = counter
+                with open(COUNTER_FILE, "w") as f:
+                    f.write(str(counter))
+                previous_counter = counter
             counter = 0
 
 bot.run(TOKEN)
