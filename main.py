@@ -39,7 +39,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    global counter
+    global counter, previous_counter
 
     if message.author.bot:
         return
