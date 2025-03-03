@@ -1,7 +1,6 @@
 import discord
-from discord.ext import commands
-import os
 import asyncio
+import os
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
@@ -22,7 +21,7 @@ intents.messages = True
 intents.guilds = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = discord.Client(intents=intents)
 lock = asyncio.Lock()
 
 def save_counter(value):
